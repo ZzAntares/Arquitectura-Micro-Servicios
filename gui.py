@@ -9,8 +9,8 @@
 #
 #   Este archivo define la interfaz gráfica del usuario. Recibe dos parámetros que posteriormente son enviados
 #   a servicios que la interfaz utiliza.
-#   
-#   
+#
+#
 #
 #                                             gui.py
 #           +-----------------------+-------------------------+------------------------+
@@ -37,7 +37,8 @@ def index():
 def sentiment_analysis():
 	# Se obtienen los parámetros que nos permitirán realizar la consulta
 	title = request.args.get("t")
-	url_omdb = urllib.urlopen("https://uaz.cloud.tyk.io/content/api/v1/information?t=" + title)
+	#url_omdb = urllib.urlopen("https://uaz.cloud.tyk.io/content/api/v1/information?t=" + title)
+    url_omdb = urllib.urlopen("http://localhost:8084/api/v1/information?t=" + title)
 	# Se lee la respuesta de OMDB
 	json_omdb = url_omdb.read()
 	# Se convierte en un JSON la respuesta leída
@@ -45,9 +46,19 @@ def sentiment_analysis():
 	# Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
 	json_result = {}
 	json_result['omdb'] = omdb
+
+    # Se manda llamar el microservicio de analisis de sentimientos
+	url_sentiment = urllib.urlopen("http://localhost:8085/api/v1/sentimiento?t=" + title)
+	# Se lee la respuesta del análisis de sentimientos
+	json_sentiment = url_sentiment.read()
+	# Se convierte en un JSON la respuesta leída
+	sentiment = json.loads(json_sentiment)
+    # Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
+	json_result['sentiment'] = sentiment
+		
 	# Se regresa el template de la interfaz gráfica predefinido así como los datos que deberá cargar
 	return render_template("status.html", result=json_result)
-	
+
 
 if __name__ == '__main__':
 	# Se define el puerto del sistema operativo que utilizará el Sistema de Procesamiento de Comentarios (SPC).
