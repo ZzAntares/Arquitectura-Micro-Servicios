@@ -38,7 +38,7 @@ def sentiment_analysis():
 	# Se obtienen los parámetros que nos permitirán realizar la consulta
 	title = request.args.get("t")
 	#url_omdb = urllib.urlopen("https://uaz.cloud.tyk.io/content/api/v1/information?t=" + title)
-    url_omdb = urllib.urlopen("http://localhost:8084/api/v1/information?t=" + title)
+	url_omdb = urllib.urlopen("http://localhost:8084/api/v1/information?t=" + title)
 	# Se lee la respuesta de OMDB
 	json_omdb = url_omdb.read()
 	# Se convierte en un JSON la respuesta leída
@@ -55,7 +55,7 @@ def sentiment_analysis():
 	sentiment = json.loads(json_sentiment)
     # Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
 	json_result['sentiment'] = sentiment
-		
+
 	# Se regresa el template de la interfaz gráfica predefinido así como los datos que deberá cargar
 	return render_template("status.html", result=json_result)
 

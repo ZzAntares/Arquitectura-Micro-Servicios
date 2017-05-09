@@ -28,9 +28,10 @@
 #
 import os
 from flask import Flask, abort, render_template, request
-import urllib, json, requests
-import settings
+import urllib, json, requests, settings, redis
+
 app = Flask (__name__)
+r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
 @app.route("/api/v1/sentimiento")
 def get_analyze():
@@ -39,6 +40,18 @@ def get_analyze():
 	title = request.args.get("t")
 	# Se verifica si el parámetro no esta vacío
 	if title is not None:
+		# Se obtiene la respuesta de mashape
+		resultado = get_tweets(title)
+		# Se regresa el JSON de la respuesta
+		return resultado
+ 	else:
+ 		# Se devuelve un error 400 para indicar que el servicio no puede funcionar sin parámetro
+ 		abort(400)
+
+def get_sentiment_tw(text):
+	# Método que obtiene la información del sentimiento acerca de un título en particular
+	# Se verifica si el parámetro no esta vacío
+	if text is not None:
 		# Se conecta con el servicio de mashape a través de su API
 		endpoint = 'https://text-sentiment.p.mashape.com/analyze'
 		headers = {
@@ -49,7 +62,7 @@ def get_analyze():
         # Se envían los paramétros al API
 		params = {
 		'language': 'english',
-		'text': title,
+		'text': text,
 		}
 
 		# Se obtiene la respuesta de mashape
@@ -57,12 +70,32 @@ def get_analyze():
 		# {"lang": "ENGLISH", "totalLines": 1, "text": "I am not really happy", "mid_percent": "0%", "mid": 0, "pos": 0, "pos_percent": "0%", "neg": 1, "neg_percent": "100%"}
         # Se convierte en un JSON la respuesta recibida
 		respuesta = resultado.json()
-		# Se regresa el JSON de la respuesta
-		return json.dumps(respuesta)
+		if(respuesta["mid"]==1):
+			json_sentiment="neutral"
+
+		if(respuesta["pos"]==1):
+		   json_sentiment="positivo"
+
+		if(respuesta["neg"]==1):
+		   json_sentiment="negativo"
+
+		# Se regresa la respuesta
+		return json_sentiment
  	else:
  		# Se devuelve un error 400 para indicar que el servicio no puede funcionar sin parámetro
  		abort(400)
 
+def get_tweets(title):
+	# Obtener todos los tw del titulo o serie
+	tw_keys = r.keys(title+'-*-')
+	for tw_key in tw_keys:
+		if(r.exists(tw_key+"sentiment")==0):
+			sentimiento = get_sentiment_tw(r.get(tw_key))
+			r.set(tw_key+"sentiment",sentimiento)
+	m = {'sent': 'negativo'}
+	n = json.dumps(m)
+
+	return n
 
 
 if __name__ == '__main__':
