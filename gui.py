@@ -28,8 +28,12 @@ import urllib, json
 import requests
 app = Flask (__name__)
 
+
+
 @app.route("/")
 def index():
+        global title
+        title = request.args.get("t")
 	# Método que muestra el index del GUI
 	return render_template("index.html")
 
@@ -37,7 +41,7 @@ def index():
 def sentiment_analysis():
 	# Se obtienen los parámetros que nos permitirán realizar la consulta
 	title = request.args.get("t")
-	url_omdb = urllib.urlopen("https://uaz.cloud.tyk.io/content/api/v1/information?t=" + title)
+	url_omdb = urllib.urlopen("http://localhost:8084/api/v1/information?t=" + title)
 	# Se lee la respuesta de OMDB
 	json_omdb = url_omdb.read()
 	# Se convierte en un JSON la respuesta leída
@@ -46,7 +50,18 @@ def sentiment_analysis():
 	json_result = {}
 	json_result['omdb'] = omdb
 	# Se regresa el template de la interfaz gráfica predefinido así como los datos que deberá cargar
+    
+    # Se llama al microservicio de twitter
+	url_twitter = urllib.urlopen("http://localhost:8086/api/v1/tweets?t=" + title)
+    # Se lee la respuesta de tweets
+	json_twitter = url_twitter.read()
+    # Se convierte en un JSON la respuesta leída
+        twitter = json.loads(json_twitter)
+        json_tweets['twitter'] = twitter
+        
 	return render_template("status.html", result=json_result)
+
+
 	
 
 if __name__ == '__main__':
