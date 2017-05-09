@@ -1,40 +1,38 @@
 # -*- coding: utf-8 -*-
 from twython import Twython
-from twython import TwythonStreamer
+from slugify import slugify
 import json
+import redis
+import settings
 import os
 from flask import Flask, abort, render_template, request
 import urllib, json
 import sys
 app = Flask (__name__)
-#from flask import title
+
+
+APP_KEY = 'MUebLOiElmDhgGoyFYZelhiMn'
+APP_SECRET = 'eSJBb3LYEuN7XFV5U00IFBNtuWBgmsHPeUfPk8HkSxaIhTvMgR'
+OAUTH_TOKEN = '2891574093-0FgmSMcryoJXoCOObTSneUALpRTSpqpo53WDuRj'
+OAUTH_TOKEN_SECRET = 'QwC7VGrYjH9jo0eBKlR8cK8bHv6cUwLIzNzFKN4khfM5G'
+
+twitter = Twython(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+
+r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
 @app.route("/api/v1/tweets")
-def get_tweet():
+def get_tweets():
     title = request.args.get("t")
+    title = slugify(title)
     
-    APP_KEY = 'MUebLOiElmDhgGoyFYZelhiMn'
-    APP_SECRET = 'eSJBb3LYEuN7XFV5U00IFBNtuWBgmsHPeUfPk8HkSxaIhTvMgR'
-    OAUTH_TOKEN = '2891574093-0FgmSMcryoJXoCOObTSneUALpRTSpqpo53WDuRj'
-    OAUTH_TOKEN_SECRET = 'QwC7VGrYjH9jo0eBKlR8cK8bHv6cUwLIzNzFKN4khfM5G'
-    
-    
-    stream = MyStreamer(APP_KEY, APP_SECRET,
-                    OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-    stream.statuses.filter(track=title)
-
-@app.route("/api/v1/tweets")
-class MyStreamer(TwythonStreamer):
-    def on_success(self, data):
-        title = request.args.get("t")
-        with open(title + '.json', 'a') as f:
-            f.write(json.dumps(data[u'text'])+"\n")
-            # Para abrir después.
-            #json_read = json_tweets.read()
-            #tweet = json.loads(json_read)
-            #return json.dumps(tweet)
-        
-
+    resultados = twitter.search(q=title, count=50)
+    datos = resultados.keys()
+    for i in range(len(resultados[datos[1]])):
+        id_title = resultados[datos[1]][i][u'id_str']
+        text = resultados[datos[1]][i][u'text']
+        r.set(title+":"+id_title,text)
+    return title
+            
 
 if __name__ == '__main__':
 
