@@ -1,5 +1,6 @@
-import urllib
 import json
+import urllib
+import httpretty
 from servicios.sv_information import app
 
 
@@ -9,8 +10,21 @@ class TestInformationService:
         app.config['TESTING'] = True
         self.client = app.test_client()
 
+    @httpretty.activate
     def test_get_information(self):
-        data = {'t': 'The avengers'}
+        httpretty.register_uri(
+            httpretty.GET,
+            'http://www.omdbapi.com',
+            body="""
+            {
+                "Title": "Drive Me Crazy",
+                "Director": "John Schultz",
+                "Type": "movie"
+            }
+            """,
+            content_type='application/json')
+
+        data = {'t': 'Drive me crazy'}
 
         response = self.client.get(
             '/api/v1/information?' + urllib.urlencode(data))
