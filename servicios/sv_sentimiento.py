@@ -14,15 +14,15 @@
 #
 #
 #                                        sv_sentimiento.py
-#           +-----------------------+--------------------------+-----------------------------+
-#           |  Nombre del elemento  |     Responsabilidad      |      Propiedades            |
-#           +-----------------------+--------------------------+-----------------------------+
-#           |                       |  - Ofrecer un JSON que   | - Utiliza el API de         |
-#           |    Procesador de      |    contenga el sentimien-|   IMDb.                     |
-#           |    sentimientos       |    to de los comentarios | - Devuelve un JSON con el   |
-#           |    de mashape         |    en tw de películas o  |   sentimiento de la serie o |
-#           |                       |    series en particular. |   pelicula en cuestión.     |
-#           +-----------------------+--------------------------+-----------------------------+
+#           +-----------------------+--------------------------+---------------------------------------------+
+#           |  Nombre del elemento  |     Responsabilidad      |      Propiedades                            |
+#           +-----------------------+--------------------------+---------------------------------------------+
+#           |                       |  - Ofrecer un JSON que   | - Utiliza el API de                         |
+#           |    Procesador de      |    contenga el sentimien-|   mashape.                                  |
+#           |    sentimientos       |    to de los comentarios | - Devuelve un JSON con el total de          |
+#           |    de mashape         |    en tw de películas o  |   sentimiento positivos, negativos, neutros |
+#           |                       |    series en particular. |   de la serie o pelicula en cuestión.       |
+#           +-----------------------+--------------------------+---------------------------------------------+
 #
 #	Ejemplo de uso: Abrir navegador e ingresar a http://localhost:8085/api/v1/sentimiento?t=matrix
 #
@@ -40,7 +40,7 @@ def get_analyze():
 	title = request.args.get("t")
 	# Se verifica si el parámetro no esta vacío
 	if title is not None:
-		# Se obtiene la respuesta de mashape
+		# Se obtiene la respuesta de analisis
 		resultado = get_tweets(title)
 		# Se regresa el JSON de la respuesta
 		return resultado
@@ -86,16 +86,35 @@ def get_sentiment_tw(text):
  		abort(400)
 
 def get_tweets(title):
-	# Obtener todos los tw del titulo o serie
-	tw_keys = r.keys(title+'-*-')
+	tw_positivos=0
+	tw_negativos=0
+	tw_neutral=0
+	# Obtener todos los tw del titulo o serie para obtener su sentimiento
+	tw_keys = r.keys(title+':*:')
 	for tw_key in tw_keys:
+		# Verificar que no exista el tw en la base de datos
 		if(r.exists(tw_key+"sentiment")==0):
+			#Enviar el tw analizar para obtener el sentimiento
 			sentimiento = get_sentiment_tw(r.get(tw_key))
+			#Guardar el sentimiento en la base de datos
 			r.set(tw_key+"sentiment",sentimiento)
-	m = {'sent': 'negativo'}
-	n = json.dumps(m)
+        #Obtener los sentimientos para contabilizarlos de acuerdo a si es
+		#positivo, negativo o neutral
+		sentimiento_tw = r.get(tw_key+"sentiment")
+		if(sentimiento_tw=="positivo"):
+		    tw_positivos+=1
 
-	return n
+		if(sentimiento_tw=="negativo"):
+		    tw_negativos+=1
+
+		if(sentimiento_tw=="neutral"):
+		    tw_neutral+=1
+
+	totales = {'positivo': tw_positivos,'negativo': tw_negativos, 'neutral': tw_neutral}
+	#Enviar respuesta en formato json
+	json_totales = json.dumps(totales)
+
+	return json_totales
 
 
 if __name__ == '__main__':

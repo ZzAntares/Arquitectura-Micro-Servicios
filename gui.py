@@ -47,6 +47,12 @@ def sentiment_analysis():
 	json_result = {}
 	json_result['omdb'] = omdb
 
+
+
+
+
+
+
     # Se manda llamar el microservicio de analisis de sentimientos
 	url_sentiment = urllib.urlopen("http://localhost:8085/api/v1/sentimiento?t=" + title)
 	# Se lee la respuesta del análisis de sentimientos
