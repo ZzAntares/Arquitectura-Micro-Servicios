@@ -110,7 +110,9 @@ def get_tweets(title):
 		if(sentimiento_tw=="neutral"):
 		    tw_neutral+=1
 
-	totales = {'positivo': tw_positivos,'negativo': tw_negativos, 'neutral': tw_neutral}
+	totales = {'neutral': tw_neutral,'positivo': tw_positivos,'negativo': tw_negativos}
+	sentimiento_pelicula=max(totales, key=totales.get)
+	totales['sentimiento_pelicula']=sentimiento_pelicula
 	#Enviar respuesta en formato json
 	json_totales = json.dumps(totales)
 
