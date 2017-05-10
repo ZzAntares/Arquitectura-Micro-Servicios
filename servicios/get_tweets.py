@@ -10,18 +10,23 @@ import urllib, json
 import sys
 app = Flask (__name__)
 
-
+# Llaves para identifocarse en la app
 APP_KEY = 'MUebLOiElmDhgGoyFYZelhiMn'
 APP_SECRET = 'eSJBb3LYEuN7XFV5U00IFBNtuWBgmsHPeUfPk8HkSxaIhTvMgR'
 OAUTH_TOKEN = '2891574093-0FgmSMcryoJXoCOObTSneUALpRTSpqpo53WDuRj'
 OAUTH_TOKEN_SECRET = 'QwC7VGrYjH9jo0eBKlR8cK8bHv6cUwLIzNzFKN4khfM5G'
 
+#Se conecta con la API
 twitter = Twython(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 
+#Se conecra a Redis para poder guardar  los comentarips de tweeter
 r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
+#   Método para poder guardar los tweets
 @app.route("/api/v1/tweets")
 def get_tweets():
+	
+	
     title = request.args.get("t")
     title = slugify(title)
     
