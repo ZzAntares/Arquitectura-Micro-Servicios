@@ -1,0 +1,24 @@
+FORMAT: 1A
+
+# SV Tweets API
+[descripcion]
+
+# Group Information
+Recursos de **SV Tweets API**.
+
+## Information [/api/v1/tweets{?t}&{tipo}]
+### Obtiene comentarios a partir de la película especificada [GET]
+
++ Parameters
+    + t (required, string) ... Es el título de la película de la cual se desea saber el sentimiento.
+    + tipo (required, string) ... Es el tipo del contenido que se buscará `movie` o `series`.
+
++ Request (application/x-www-form-urlencoded)
+
+        t=Stranger+things&tipo=movies
+
++ Response 200 (application/json)
+
+        {
+            "sent": "negativo"
+        }

@@ -1,0 +1,25 @@
+FORMAT: 1A
+
+# SV Sentimiento API
+Su función general es proporcionar en un objeto `JSON` información acerca
+del sentimiento de los comentarios en twitter sobre una pelicula o una serie
+en particular haciendo uso del API proporcionada.
+
+# Group Information
+Recursos de **SV Sentimiento API**.
+
+## Information [/api/v1/sentimiento{?t}]
+### Obtiene sentimiento a partir de comentarios de la película especificada [GET]
+
++ Parameters
+    + t (required, string) ... Es el título de la película de la cual se desea saber el sentimiento.
+
++ Request (application/x-www-form-urlencoded)
+
+        t=Stranger+things
+
++ Response 200 (application/json)
+
+        {
+            "sent": "negativo"
+        }
