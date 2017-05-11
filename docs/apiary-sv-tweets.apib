@@ -1,7 +1,9 @@
 FORMAT: 1A
 
 # SV Tweets API
-[descripcion]
+Su función principal es obtener los tweets con respecto a una película para
+posteriormente guardar estos tweets en una base de datos Este microservicio
+usa la API de twitter a través de la librería de Twython.
 
 # Group Information
 Recursos de **SV Tweets API**.
@@ -17,8 +19,6 @@ Recursos de **SV Tweets API**.
 
         t=Stranger+things&tipo=movies
 
-+ Response 200 (application/json)
++ Response 200 (application/text)
 
-        {
-            "sent": "negativo"
-        }
+        "Stranger things"
