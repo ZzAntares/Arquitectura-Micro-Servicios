@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 #----------------------------------------------------------------------------------------------------------------
-# Archivo: get_tweets.py
+# Archivo: sv_tweets.py
 # Tarea: 2 Arquitecturas Micro Servicios.
 # Autor(es): Karina Chaires, Arturo Lagunas, Julio Gutiérrez.
 # Version:  Mayo 2017
@@ -17,13 +17,13 @@
 #           +-----------------------+--------------------------+-----------------------------+
 #           |  Nombre del elemento  |     Responsabilidad      |      Propiedades            |
 #           +-----------------------+--------------------------+-----------------------------+
-#	    |                       |  - Obtener los tweets    | - Utiliza la librería       |
+#	        |                       |  - Obtener los tweets    | - Utiliza la librería       |
 #           |    Procesador de      |    que contengan comenta-|   Twython.                  |
 #           |    tweets sobre       |    rios sobre una pelícu-| - Guarda los comentarios en |
 #           |    una película	    |    la en particular      |   Redis sobre la película   |
-#           |                       |    		       |   que se busca.     	     |
-#	    |			    |			       | - Devuelve el títul de la   |
-#	    |			    |			       |   película		     |
+#           |                       |    que se busca.     	   |                             |
+#   	    |          			    |        			       | - Devuelve el título de la  |
+#   	    |          			    |        			       |   película      		     |
 #           +-----------------------+--------------------------+-----------------------------+
 #
 #	Ejemplo de uso: Abrir navegador e ingresar a http://localhost:8084/api/v1/information?t=matrix
