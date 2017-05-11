@@ -6,7 +6,8 @@ Repositorio de la tarea 2
 
 Este proyecto muestra una interfaz web en la que puedes consultar información
 sobre una película o serie y te muestra el sentimiento que genera en base al
-análisis de los mensajes más relevantes encontrados en Twitter.
+análisis de los mensajes más relevantes encontrados en Twitter. Esta práctica se
+realiza con el fin de conocer la implementación de la arquitectura de microservicios.
 
 
 ## Instalación
@@ -24,7 +25,7 @@ Paquete     | Versión | Descripción
 Flask       | 0.10.1  | Micro framework de desarrollo
 requests    | 2.12.4  | API interna utilizada en Flask para trabajar con las peticiones hacia el servidor
 twython     | 3.4.0   | Cliente para comunicarse con el API de Twitter
-slugify     | 0.0.1   | Librería para normalizar cadenas en formato de /slug/ `"Stranger Things" -> 'stranger-things'`
+slugify     | 0.0.1   | Librería para normalizar cadenas en formato de _slug_ `"Stranger Things" -> 'stranger-things'`
 redis       | 2.10.5  | Driver de conexión a base de datos Python -> Redis
 httpretty   | 0.8.14  | Librería para simular peticiones HTTP en pruebas
 pytest      | 3.0.7   | Librería test-runner para ejecución de pruebas
@@ -62,32 +63,34 @@ no es necesario que se instale Redis pero si es necesario contar con una
 conexión a internet al ejecutar el proyecto ya que de no ser así el proyecto no
 podrá hacer uso de la base de datos.
 
-Si por el contrario se desea utilizar un servidor de Redis local será necesario
-que se instale primero en la máquina que ejecutará los microservicios de
-`sv_tweets.py` y `sv_sentimiento.py`.
+Si por el contrario se desea utilizar un servidor de Redis local o el servidor
+remoto de Redis no está disponible, será necesario que se instale en la máquina
+que ejecutará los microservicios de `sv_tweets.py` y `sv_sentimiento.py`.
 
 Para instalar Redis en Ubuntu puede seguir estos pasos:
 
 ``` shell
 $ sudo apt-get update && apt-get install redis-server  # Instalar redis
-$ sudo service redis-server start  # Inicia el servicio de redis
-$ redis-cli ping  # En la pantalla se imprime 'PONG' si todo esta correcto
+$ sudo service redis-server start                      # Inicia el servicio de redis
+$ redis-cli ping                                       # En la pantalla se imprime 'PONG' si todo es correcto
 ```
 
 Posteriormente es necesario cambiar la configuración del proyecto para que se
 utilice la instancia local de Redis, para ello es necesario modificar el archivo
 `services/settings.py` especificando los datos de conexión. Asumiendo que Redis
-se ha instalado sin modificar ninguna configuración se pueden utilizar los
+se ha instalado sin modificar ninguna configuración, se pueden utilizar los
 siguientes datos:
 
 ```
+# servicios/settings.py
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 1
 ```
 
-Una ves modificado y guardado este archivo es necesario reiniciar los servicios
-de `sv_tweets.py` y `sv_sentimiento.py` para que los cambios tomen efecto.
+Una ves modificado y guardado este archivo es necesario reiniciar los
+servicios de `sv_tweets.py` y `sv_sentimiento.py` para que los cambios
+en la configuaración hagan efecto.
 
 
 ## Especificación de Microservicios (Blueprint)
