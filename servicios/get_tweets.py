@@ -54,12 +54,14 @@ r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=set
 @app.route("/api/v1/tweets")
 def get_tweets():
 
-    # Se lee el parámetro 't' que contiene el título de la película o serie que se va a consultar
+    #Se lee el parámetro 't' que contiene el título de la película o serie que se va a consultar
     title = request.args.get("t")
+    #Obtiene el tipo de la búsqueda que puede ser película o serie
+    tipo = request.args.get("tipo")
     #Se hace slug al nombre de la película
     title = slugify(title)
-    #Se buscan los tweets de la película consultada
-    resultados = twitter.search(q=title, count=50)
+    #Se buscan los tweets de la película o serie consultada
+    resultados = twitter.search(q=title+"-"+tipo, count=50)
     #Se pasan a diccionario los datos obtenidos
     datos = resultados.keys()
     for i in range(len(resultados[datos[1]])):
@@ -71,13 +73,14 @@ def get_tweets():
 	if(r.exists(title+":"+id_title+":")==0):
 			r.set(title+":"+id_title+":",text)
     #Se regresa el nombre de la película para su posterior uso.
-    return title
+    return json.dumps(title)
+
 
 
 if __name__ == '__main__':
-	# Se define el puerto del sistema operativo que utilizará el servicio
+	#Se define el puerto del sistema operativo que utilizará el servicio
 	port = int(os.environ.get('PORT', 8086))
-	# Se habilita la opción de 'debug' para visualizar los errores
+	#Se habilita la opción de 'debug' para visualizar los errores
 	app.debug = True
-	# Se ejecuta el servicio definiendo el host '0.0.0.0' para que se pueda acceder desde cualquier IP
+	#Se ejecuta el servicio definiendo el host '0.0.0.0' para que se pueda acceder desde cualquier IP
 	app.run(host='0.0.0.0', port=port)
