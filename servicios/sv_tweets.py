@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 #----------------------------------------------------------------------------------------------------------------
-# Archivo: get_tweets.py
+# Archivo: sv_tweets.py
 # Tarea: 2 Arquitecturas Micro Servicios.
 # Autor(es): Karina Chaires, Arturo Lagunas, Julio Gutiérrez.
 # Version:  Mayo 2017
