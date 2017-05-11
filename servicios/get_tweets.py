@@ -53,7 +53,7 @@ r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=set
 #   Método para poder guardar los tweets
 @app.route("/api/v1/tweets")
 def get_tweets():
-	
+
     # Se lee el parámetro 't' que contiene el título de la película o serie que se va a consultar
     title = request.args.get("t")
     #Se hace slug al nombre de la película
@@ -68,10 +68,11 @@ def get_tweets():
 	#Se obtiene el texto del comentario
         text = resultados[datos[1]][i][u'text']
 	#Se guardan los reultados en la Redis, el cual es una base de datos.
-        r.set(title+":"+id_title,text)
+	if(r.exists(title+":"+id_title+":")==0):
+			r.set(title+":"+id_title+":",text)
     #Se regresa el nombre de la película para su posterior uso.
     return title
-            
+
 
 if __name__ == '__main__':
 	# Se define el puerto del sistema operativo que utilizará el servicio

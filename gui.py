@@ -49,9 +49,9 @@ def sentiment_analysis():
 
     # Se llama al microservicio de twitter
 	url_twitter = urllib.urlopen("http://localhost:8086/api/v1/tweets?t=" + title)
-
+	pelicula_tw = url_twitter.read()
     # Se manda llamar el microservicio de analisis de sentimientos
-	url_sentiment = urllib.urlopen("http://localhost:8085/api/v1/sentimiento?t=" + title)
+	url_sentiment = urllib.urlopen("http://localhost:8085/api/v1/sentimiento?t=" + pelicula_tw)
 	# Se lee la respuesta del análisis de sentimientos
 	json_sentiment = url_sentiment.read()
 	# Se convierte en un JSON la respuesta leída

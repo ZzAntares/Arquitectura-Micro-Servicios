@@ -65,23 +65,28 @@ def get_sentiment_tw(text):
 		'text': text,
 		}
 
+		#Se inicializa variable
+		json_sentiment="ninguno"
 		# Se obtiene la respuesta de mashape
 		resultado = requests.post(endpoint, headers=headers, params=params)
 		# {"lang": "ENGLISH", "totalLines": 1, "text": "I am not really happy", "mid_percent": "0%", "mid": 0, "pos": 0, "pos_percent": "0%", "neg": 1, "neg_percent": "100%"}
-        # Se convierte en un JSON la respuesta recibida
-		respuesta = resultado.json()
-		if(respuesta["mid"]==1):
-			json_sentiment="neutral"
+	        if resultado is not None:
+				# Se convierte en un JSON la respuesta recibida
+				respuesta = resultado.json()
+				if(respuesta["mid"]==1):
+					json_sentiment="neutral"
 
-		if(respuesta["pos"]==1):
-		   json_sentiment="positivo"
+				if(respuesta["pos"]==1):
+				   json_sentiment="positivo"
 
-		if(respuesta["neg"]==1):
-		   json_sentiment="negativo"
+				if(respuesta["neg"]==1):
+				   json_sentiment="negativo"
+	        else:
+				json_sentiment="ninguno"
 
 		# Se regresa la respuesta
 		return json_sentiment
- 	else:
+	else:
  		# Se devuelve un error 400 para indicar que el servicio no puede funcionar sin parámetro
  		abort(400)
 
@@ -89,32 +94,34 @@ def get_tweets(title):
 	tw_positivos=0
 	tw_negativos=0
 	tw_neutral=0
+	totales= {}
 	# Obtener todos los tw del titulo o serie para obtener su sentimiento
 	tw_keys = r.keys(title+':*:')
-	for tw_key in tw_keys:
-		# Verificar que no exista el tw en la base de datos
-		if(r.exists(tw_key+"sentiment")==0):
-			#Enviar el tw analizar para obtener el sentimiento
-			sentimiento = get_sentiment_tw(r.get(tw_key))
-			#Guardar el sentimiento en la base de datos
-			r.set(tw_key+"sentiment",sentimiento)
-        #Obtener los sentimientos para contabilizarlos de acuerdo a si es
-		#positivo, negativo o neutral
-		sentimiento_tw = r.get(tw_key+"sentiment")
-		if(sentimiento_tw=="positivo"):
-		    tw_positivos+=1
+	if tw_keys is not None:
+		for tw_key in tw_keys:
+			# Verificar que no exista el tw en la base de datos
+			if(r.exists(tw_key+"sentiment")==0):
+				#Enviar el tw analizar para obtener el sentimiento
+				sentimiento = get_sentiment_tw(r.get(tw_key))
+				#Guardar el sentimiento en la base de datos
+				r.set(tw_key+"sentiment",sentimiento)
+	        #Obtener los sentimientos para contabilizarlos de acuerdo a si es
+			#positivo, negativo o neutral
+			sentimiento_tw = r.get(tw_key+"sentiment")
+			if(sentimiento_tw=="positivo"):
+			    tw_positivos+=1
 
-		if(sentimiento_tw=="negativo"):
-		    tw_negativos+=1
+			if(sentimiento_tw=="negativo"):
+			    tw_negativos+=1
 
-		if(sentimiento_tw=="neutral"):
-		    tw_neutral+=1
+			if(sentimiento_tw=="neutral"):
+			    tw_neutral+=1
 
-	totales = {'neutral': tw_neutral,'positivo': tw_positivos,'negativo': tw_negativos}
-	sentimiento_pelicula=max(totales, key=totales.get)
-	totales['sentimiento_pelicula']=sentimiento_pelicula
-	#Enviar respuesta en formato json
-	json_totales = json.dumps(totales)
+		totales = {'neutral': tw_neutral,'positivo': tw_positivos,'negativo': tw_negativos}
+		sentimiento_pelicula=max(totales, key=totales.get)
+		totales['sentimiento_pelicula']=sentimiento_pelicula
+		#Enviar respuesta en formato json
+		json_totales = json.dumps(totales)
 
 	return json_totales
 
