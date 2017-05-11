@@ -28,6 +28,7 @@
 #
 import os
 from flask import Flask, abort, render_template, request
+from slugify import slugify
 import urllib, json, requests, settings, redis
 
 app = Flask (__name__)
@@ -38,6 +39,8 @@ def get_analyze():
 	# Método que obtiene la información del sentimiento acerca de un título en particular
 	# Se lee el parámetro 't' que contiene el título de la película o serie que se va a consultar
 	title = request.args.get("t")
+	#Se hace slug al nombre de la película
+	title = slugify(title)
 	# Se verifica si el parámetro no esta vacío
 	if title is not None:
 		# Se obtiene la respuesta de analisis
@@ -104,6 +107,7 @@ def get_tweets(title):
 				#Enviar el tw analizar para obtener el sentimiento
 				sentimiento = get_sentiment_tw(r.get(tw_key))
 				#Guardar el sentimiento en la base de datos
+				#sentimiento = "positivo"
 				r.set(tw_key+"sentiment",sentimiento)
 	        #Obtener los sentimientos para contabilizarlos de acuerdo a si es
 			#positivo, negativo o neutral
