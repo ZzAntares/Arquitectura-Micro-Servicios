@@ -46,22 +46,10 @@ def sentiment_analysis():
 	# Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
 	json_result = {}
 	json_result['omdb'] = omdb
-<<<<<<< HEAD
 
-
-
-
-
-
-
-=======
-    
-    
     # Se llama al microservicio de twitter
 	url_twitter = urllib.urlopen("http://localhost:8086/api/v1/tweets?t=" + title)
 
-    
->>>>>>> 910f6a1ff949dbcfcd6d886d212c39e55f9b4024
     # Se manda llamar el microservicio de analisis de sentimientos
 	url_sentiment = urllib.urlopen("http://localhost:8085/api/v1/sentimiento?t=" + title)
 	# Se lee la respuesta del análisis de sentimientos
@@ -71,10 +59,6 @@ def sentiment_analysis():
     # Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
 	json_result['sentiment'] = sentiment
 
-<<<<<<< HEAD
-=======
-    
->>>>>>> 910f6a1ff949dbcfcd6d886d212c39e55f9b4024
 	# Se regresa el template de la interfaz gráfica predefinido así como los datos que deberá cargar
 	return render_template("status.html", result=json_result)
 
