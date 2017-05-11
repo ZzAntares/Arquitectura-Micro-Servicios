@@ -61,7 +61,7 @@ def get_tweets():
     #Se hace slug al nombre de la película
     title = slugify(title)
     #Se buscan los tweets de la película o serie consultada
-    resultados = twitter.search(q=title+"-"+tipo, count=50)
+    resultados = twitter.search(q=title+"-"+tipo, count=30)
     #Se pasan a diccionario los datos obtenidos
     datos = resultados.keys()
     for i in range(len(resultados[datos[1]])):
