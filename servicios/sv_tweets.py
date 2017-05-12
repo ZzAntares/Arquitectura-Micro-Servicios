@@ -58,6 +58,11 @@ def get_tweets():
     title = request.args.get("t")
     #Obtiene el tipo de la búsqueda que puede ser película o serie
     tipo = request.args.get("tipo")
+
+    # Verifica que exista el titulo y el tipo
+    if not (title and tipo):
+        abort(400)
+
     #Se hace slug al nombre de la película
     title = slugify(title)
     #Se buscan los tweets de la película o serie consultada

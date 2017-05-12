@@ -1,8 +1,4 @@
-import json
-import urllib
 from servicios.sv_sentimiento import app, get_sentiment_tw
-
-
 import httpretty
 
 
