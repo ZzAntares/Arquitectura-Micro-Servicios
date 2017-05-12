@@ -61,14 +61,12 @@ def get_sentiment_tw(text):
 	# Se conecta con el servicio de mashape a través de su API
 	endpoint = 'http://text-processing.com/api/sentiment/'
 	headers = {
-		# 'X-Mashape-Key': settings.MASHAPE_KEY,
 		"Content-Type": "application/x-www-form-urlencoded",
 		"Accept": "application/json"
 	}
 
 	# Se envían los paramétros al API
 	params = {
-		# 'language': 'english',
 		'text': text,
 	}
 
