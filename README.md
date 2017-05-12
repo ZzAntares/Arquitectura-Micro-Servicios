@@ -1,4 +1,7 @@
 # Arquitectura-Micro-Servicios
+
+[![Build Status](https://travis-ci.org/ZzAntares/Arquitectura-Micro-Servicios.svg?branch=master)](https://travis-ci.org/ZzAntares/Arquitectura-Micro-Servicios)
+
 Repositorio de la tarea 2
 
 
