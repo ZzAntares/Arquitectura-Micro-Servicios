@@ -47,7 +47,7 @@ def sentiment_analysis():
 	json_result = {}
 	json_result['omdb'] = omdb
         #Se obtiene el tipo de búsqueda de acuerdo a como esté en iMDB
-        tipo = omdb['Type']
+        tipo = omdb.get('Type', 'movie serie')  # Si no hay tipo usa 'movie serie' por default
 
     # Se llama al microservicio de twitter
 	url_twitter = urllib.urlopen("http://localhost:8086/api/v1/tweets?t="+title+"&tipo="+tipo)
