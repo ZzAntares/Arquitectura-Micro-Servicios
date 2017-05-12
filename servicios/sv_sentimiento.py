@@ -39,10 +39,10 @@ def get_analyze():
 	# Método que obtiene la información del sentimiento acerca de un título en particular
 	# Se lee el parámetro 't' que contiene el título de la película o serie que se va a consultar
 	title = request.args.get("t")
-	#Se hace slug al nombre de la película
-	title = slugify(title)
 	# Se verifica si el parámetro no esta vacío
-	if title is not None:
+	if title:
+		#Se hace slug al nombre de la película
+		title = slugify(title)
 		# Se obtiene la respuesta de analisis
 		resultado = get_tweets(title)
 		# Se regresa el JSON de la respuesta
@@ -52,6 +52,7 @@ def get_analyze():
  		abort(400)
 
 def get_sentiment_tw(text):
+	print('analizando: ' + text)
 	# Método que obtiene la información del sentimiento acerca de un título en particular
 	# Se verifica si el parámetro no esta vacío
 	if not text:
@@ -72,7 +73,7 @@ def get_sentiment_tw(text):
 
 	# Se obtiene la respuesta de mashape
 	resultado = requests.post(endpoint, headers=headers, data=params)
-	# {"lang": "ENGLISH", "totalLines": 1, "text": "I am not really happy", "mid_percent": "0%", "mid": 0, "pos": 0, "pos_percent": "0%", "neg": 1, "neg_percent": "100%"}
+        # {"label": "neg", "probability": {"neg": 0.5260158874169073, "neutral": 0.11228576144941622, "pos": 0.4739841125830927}}
 	if resultado.status_code == 200:
 		# Se convierte en un JSON la respuesta recibida
 		respuesta = resultado.json()

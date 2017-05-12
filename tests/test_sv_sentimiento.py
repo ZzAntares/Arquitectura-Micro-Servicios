@@ -1,6 +1,6 @@
 import json
 import urllib
-from servicios.sv_sentimiento import app
+from servicios.sv_sentimiento import app, get_sentiment_tw
 
 
 import httpretty
@@ -13,34 +13,25 @@ class TestSentimientoService:
         self.client = app.test_client()
 
     @httpretty.activate
-    def test_get_analyze(self):
+    def test_get_sentiment(self):
         httpretty.register_uri(
-            httpretty.GET,
-            'https://text-sentiment.p.mashape.com/analyze',
+            httpretty.POST,
+            'http://text-processing.com/api/sentiment/',
             body="""
             {
-                "lang": "ENGLISH",
-                "totalLines": 1,
-                "text": "It was great I'll watch it again no joke haha",
-                "mid_percent": "0%",
-                "mid": 0,
-                "pos": 1,
-                "pos_percent": "100%",
-                "neg": 0,
-                "neg_percent": "0%"
+                "label": "neg",
+                "probability": {
+                    "neg": 0.5260158874169073,
+                    "neutral": 0.11228576144941622,
+                    "pos": 0.4739841125830927
+                }
             }
             """,
             content_type='application/json')
 
-        data = {'t': 'The avengers'}
+        sentiment = get_sentiment_tw('the-avengers')
 
-        response = self.client.get(
-            '/api/v1/sentimiento?' + urllib.urlencode(data))
-
-        data = json.loads(response.data)
-
-        assert 'sent' in data
-        assert data['sent'] == 'positivo'
+        assert sentiment == 'negativo'
 
     def test_get_analyze_bad_request(self):
         response = self.client.get('/api/v1/sentimiento')
