@@ -54,44 +54,38 @@ def get_analyze():
 def get_sentiment_tw(text):
 	# Método que obtiene la información del sentimiento acerca de un título en particular
 	# Se verifica si el parámetro no esta vacío
-	if text is not None:
-		# Se conecta con el servicio de mashape a través de su API
-		endpoint = 'https://text-sentiment.p.mashape.com/analyze'
-		headers = {
-		'X-Mashape-Key': settings.MASHAPE_KEY,
-		"Content-Type": "application/x-www-form-urlencoded",
-		"Accept": "application/json"
-		}
-        # Se envían los paramétros al API
-		params = {
-		'language': 'english',
-		'text': text,
-		}
-
-		#Se inicializa variable
-		json_sentiment="ninguno"
-		# Se obtiene la respuesta de mashape
-		resultado = requests.post(endpoint, headers=headers, params=params)
-		# {"lang": "ENGLISH", "totalLines": 1, "text": "I am not really happy", "mid_percent": "0%", "mid": 0, "pos": 0, "pos_percent": "0%", "neg": 1, "neg_percent": "100%"}
-	        if resultado is not None:
-				# Se convierte en un JSON la respuesta recibida
-				respuesta = resultado.json()
-				if(respuesta["mid"]==1):
-					json_sentiment="neutral"
-
-				if(respuesta["pos"]==1):
-				   json_sentiment="positivo"
-
-				if(respuesta["neg"]==1):
-				   json_sentiment="negativo"
-	        else:
-				json_sentiment="ninguno"
-
-		# Se regresa la respuesta
-		return json_sentiment
-	else:
+	if not text:
  		# Se devuelve un error 400 para indicar que el servicio no puede funcionar sin parámetro
  		abort(400)
+
+	# Se conecta con el servicio de mashape a través de su API
+	endpoint = 'http://text-processing.com/api/sentiment/'
+	headers = {
+		"Content-Type": "application/x-www-form-urlencoded",
+		"Accept": "application/json"
+	}
+
+	# Se envían los paramétros al API
+	params = {
+		'text': text,
+	}
+
+	# Se obtiene la respuesta de mashape
+	resultado = requests.post(endpoint, headers=headers, data=params)
+	# {"lang": "ENGLISH", "totalLines": 1, "text": "I am not really happy", "mid_percent": "0%", "mid": 0, "pos": 0, "pos_percent": "0%", "neg": 1, "neg_percent": "100%"}
+	if resultado.status_code == 200:
+		# Se convierte en un JSON la respuesta recibida
+		respuesta = resultado.json()
+		sentiment = respuesta["label"]
+
+		if sentiment == "neg":
+			return "negativo"
+		elif sentiment == "pos":
+			return "positivo"
+		else:
+			return "neutral"
+	else:
+		return "ninguno"
 
 def get_tweets(title):
 	tw_positivos=0
@@ -109,7 +103,7 @@ def get_tweets(title):
 				#Guardar el sentimiento en la base de datos
 				#sentimiento = "positivo"
 				r.set(tw_key+"sentiment",sentimiento)
-	        #Obtener los sentimientos para contabilizarlos de acuerdo a si es
+			#Obtener los sentimientos para contabilizarlos de acuerdo a si es
 			#positivo, negativo o neutral
 			sentimiento_tw = r.get(tw_key+"sentiment")
 			if(sentimiento_tw=="positivo"):

@@ -46,19 +46,19 @@ def sentiment_analysis():
 	# Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
 	json_result = {}
 	json_result['omdb'] = omdb
-        #Se obtiene el tipo de búsqueda de acuerdo a como esté en iMDB
-        tipo = omdb['Type']
+	#Se obtiene el tipo de búsqueda de acuerdo a como esté en iMDB
+	tipo = omdb.get('Type', 'movie serie')  # Si no hay tipo usa 'movie serie' por default
 
-    # Se llama al microservicio de twitter
+	# Se llama al microservicio de twitter
 	url_twitter = urllib.urlopen("http://localhost:8086/api/v1/tweets?t="+title+"&tipo="+tipo)
 	pelicula_tw = url_twitter.read()
-    # Se manda llamar el microservicio de analisis de sentimientos
+	# Se manda llamar el microservicio de analisis de sentimientos
 	url_sentiment = urllib.urlopen("http://localhost:8085/api/v1/sentimiento?t="+pelicula_tw)
 	# Se lee la respuesta del análisis de sentimientos
 	json_sentiment = url_sentiment.read()
 	# Se convierte en un JSON la respuesta leída
 	sentiment = json.loads(json_sentiment)
-    # Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
+	# Se llena el JSON que se enviará a la interfaz gráfica para mostrársela al usuario
 	json_result['sentiment'] = sentiment
 
 	# Se regresa el template de la interfaz gráfica predefinido así como los datos que deberá cargar
